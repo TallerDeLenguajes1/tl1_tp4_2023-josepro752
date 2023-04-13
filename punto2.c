@@ -11,7 +11,7 @@ struct Tarea {
 
 void inicializar (Tarea* arreglo[], int cant); // Tarea* arreglo[] = Tarea** arreglo
 void liberar (Tarea** arreglo, int cant);
-void descripcion (Tarea** arreglo);
+void descripcion (char** arreglo);
 void cargarTareas (Tarea** arreglo, int cant);
 void mostrarTarea(Tarea* arreglo);
 void controlarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant);
@@ -22,11 +22,13 @@ int main () {
     srand(time(NULL)); 
     printf("Ingrese la cantidad de tareas a realizar: ");
     scanf("%d", &cant);
+    fflush(stdin);
     Tarea **tareasPendientes = (Tarea **) malloc(sizeof(Tarea*)* cant);
     inicializar(tareasPendientes,cant);
     cargarTareas(tareasPendientes,cant);
     Tarea **tareasRealizadas = (Tarea **) malloc(sizeof(Tarea*)* cant);
     inicializar(tareasRealizadas,cant);
+    mostrarTodo(tareasPendientes,cant);
     return 0;
 }
 
@@ -43,19 +45,20 @@ void liberar(Tarea** arreglo, int cant) {
     free(arreglo);
 }
 
-void descripcion(Tarea** arreglo) {
+void descripcion(char** arreglo) {
     char aux[100];
     printf("Ingrese la descripcion: ");
     gets(aux);
-    arreglo = malloc(sizeof(char) * ((strlen(aux)) + 1));
-    strcpy(arreglo,aux);
+    *arreglo = malloc(sizeof(char) * ((strlen(aux)) + 1));
+    strcpy(*arreglo,aux);
 }
 
 void cargarTareas (Tarea** arreglo, int cant) {
     for (int i = 0; i < cant; i++) {
         arreglo[i] = malloc(sizeof(Tarea));
-        arreglo[i]->TareaID = i;
-        descripcion(arreglo[i]->Descripcion);
+        arreglo[i]->TareaID = i + 1;
+        printf("\nTAREA N%d\n\n", i + 1);
+        descripcion(&arreglo[i]->Descripcion);
         arreglo[i]->Duracion = 10 + rand() % 91;
     }
 }
@@ -85,6 +88,7 @@ void controlarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant) {
 void mostrarTodo(Tarea** arreglo, int cant) {
     for (int i = 0; i < cant; i++) {
         if (arreglo[i] != NULL) {
+            printf("\nTAREA N%d\n\n", i + 1);
             mostrarTarea(arreglo[i]);
         }
     }
