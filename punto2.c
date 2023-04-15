@@ -16,9 +16,11 @@ void cargarTareas (Tarea** arreglo, int cant);
 void mostrarTarea(Tarea* arreglo);
 void controlarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant);
 void mostrarTodo(Tarea** arreglo, int cant);
-Tarea* buscarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant);
+Tarea* buscarTareaPorId(Tarea** arreglo1,Tarea** arreglo2, int cant);
+Tarea* buscarTareaPorPalabra(Tarea** arreglo1, Tarea** arreglo2,int cant);
 
 int main () {
+    Tarea *buscada;
     int cant;
     srand(time(NULL)); 
     printf("Ingrese la cantidad de tareas a realizar: ");
@@ -30,9 +32,14 @@ int main () {
     Tarea **tareasRealizadas = (Tarea **) malloc(sizeof(Tarea*)* cant);
     inicializar(tareasRealizadas,cant);
     controlarTarea(tareasPendientes,tareasRealizadas,cant);
+    printf("\nTareas pendientes:\n");
     mostrarTodo(tareasPendientes,cant);
+    printf("\nTareas realizadas:\n");
     mostrarTodo(tareasRealizadas,cant);
-    mostrarTarea(buscarTarea(tareasPendientes,tareasRealizadas,cant));
+    mostrarTarea(buscarTareaPorId(tareasPendientes,tareasRealizadas,cant));
+    mostrarTarea(buscarTareaPorPalabra(tareasPendientes,tareasRealizadas,cant));
+    liberar(tareasPendientes,cant);
+    liberar(tareasRealizadas,cant);
     return 0;
 }
 
@@ -44,6 +51,9 @@ void inicializar(Tarea** arreglo, int cant) {
 
 void liberar(Tarea** arreglo, int cant) {
     for (int i = 0; i < cant; i++) {
+        if (arreglo[i] != NULL) {
+            free(arreglo[i]->Descripcion);
+        }
         free(arreglo[i]);
     }
     free(arreglo);
@@ -68,18 +78,21 @@ void cargarTareas (Tarea** arreglo, int cant) {
 }
 
 void mostrarTarea(Tarea* arreglo) {
-    printf("ID Tarea: %d\n", arreglo->TareaID);
-    printf("Tarea descripcion: %s\n", arreglo->Descripcion);
-    printf("Tarea duracion: %d\n", arreglo->Duracion);
+    if (arreglo != NULL) {
+        printf("ID Tarea: %d\n", arreglo->TareaID);
+        printf("Tarea descripcion: %s\n", arreglo->Descripcion);
+        printf("Tarea duracion: %d\n", arreglo->Duracion);
+    } else {
+        printf("La tarea no existe");
+    }
 }
 
 void controlarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant) {
     int num;
     int j = 0;
     for (int i = 0; i < cant; i++) {
-        printf("Si se completo la siguiente tarea, escriba 1. Caso contrario escriba 0\n\n");
         mostrarTarea(arreglo1[i]);
-        printf("Su respuesta: \n");
+        printf("\nSi se completo escriba 1, sino 0: \n");
         scanf("%d", &num);
         if (num == 1) {
             arreglo2[j] = arreglo1[i];
@@ -98,7 +111,29 @@ void mostrarTodo(Tarea** arreglo, int cant) {
     }
 }
 
-Tarea* buscarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant) {
+Tarea* buscarTareaPorId(Tarea** arreglo1,Tarea** arreglo2, int cant) {
+    int id;
+    printf("\nIngrese el ID de la tarea que quiere buscar:\n");
+    scanf("%d",&id);
+    fflush(stdin);
+    for (int i = 0; i < cant; i++) {
+        if (arreglo1[i] != NULL) {
+            if (arreglo1[i]->TareaID == id) {
+                puts("\nLa tarea esta en pendientes\n");
+                return (arreglo1[i]);
+            }
+        }
+        if (arreglo2[i] != NULL) {
+            if (arreglo2[i]->TareaID == id) {
+                puts("\nLa tarea esta en realizadas\n");
+                return (arreglo2[i]);
+            }
+        }
+    }
+    return NULL;
+}
+
+Tarea* buscarTareaPorPalabra(Tarea** arreglo1,Tarea** arreglo2, int cant) {
     char palabra[100];
     printf("\nIngrese la palabra clave de la tarea que quiere buscar:\n");
     fflush(stdin);
@@ -111,7 +146,7 @@ Tarea* buscarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant) {
                 return (arreglo1[i]);
             }
         }
-        if (arreglo2 != NULL) {
+        if (arreglo2[i] != NULL) {
             if (strstr(arreglo2[i]->Descripcion,palabra) != NULL) {
                 puts("\nLa tarea esta en realizadas\n");
                 return (arreglo2[i]);
