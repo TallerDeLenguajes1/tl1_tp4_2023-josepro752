@@ -16,6 +16,7 @@ void cargarTareas (Tarea** arreglo, int cant);
 void mostrarTarea(Tarea* arreglo);
 void controlarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant);
 void mostrarTodo(Tarea** arreglo, int cant);
+Tarea* buscarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant);
 
 int main () {
     int cant;
@@ -28,7 +29,10 @@ int main () {
     cargarTareas(tareasPendientes,cant);
     Tarea **tareasRealizadas = (Tarea **) malloc(sizeof(Tarea*)* cant);
     inicializar(tareasRealizadas,cant);
+    controlarTarea(tareasPendientes,tareasRealizadas,cant);
     mostrarTodo(tareasPendientes,cant);
+    mostrarTodo(tareasRealizadas,cant);
+    mostrarTarea(buscarTarea(tareasPendientes,tareasRealizadas,cant));
     return 0;
 }
 
@@ -92,4 +96,27 @@ void mostrarTodo(Tarea** arreglo, int cant) {
             mostrarTarea(arreglo[i]);
         }
     }
+}
+
+Tarea* buscarTarea(Tarea** arreglo1,Tarea** arreglo2, int cant) {
+    char palabra[100];
+    printf("\nIngrese la palabra clave de la tarea que quiere buscar:\n");
+    fflush(stdin);
+    gets(palabra);
+    fflush(stdin);
+    for (int i = 0; i < cant; i++) {
+        if (arreglo1[i] != NULL) {
+            if (strstr(arreglo1[i]->Descripcion,palabra) != NULL) {
+                puts("\nLa tarea esta en pendientes\n");
+                return (arreglo1[i]);
+            }
+        }
+        if (arreglo2 != NULL) {
+            if (strstr(arreglo2[i]->Descripcion,palabra) != NULL) {
+                puts("\nLa tarea esta en realizadas\n");
+                return (arreglo2[i]);
+            }
+        }
+    }
+    return NULL;
 }
