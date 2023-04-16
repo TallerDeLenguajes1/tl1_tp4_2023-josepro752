@@ -20,7 +20,6 @@ Tarea* buscarTareaPorId(Tarea** arreglo1,Tarea** arreglo2, int cant);
 Tarea* buscarTareaPorPalabra(Tarea** arreglo1, Tarea** arreglo2,int cant);
 
 int main () {
-    Tarea *buscada;
     int cant;
     srand(time(NULL)); 
     printf("Ingrese la cantidad de tareas a realizar: ");
